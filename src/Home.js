@@ -1,25 +1,35 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import BlogList from "./BlogList";
 
 const Home = () => {
-	const [name, setName] = useState("rustem");
-	const [count, setCount] = useState(0);
+	const [blogs, setBlogs] = useState([
+		{ title: "1", body: "123", author: "mario", id: 1 },
+		{ title: "2", body: "123", author: "licio", id: 2 },
+		{ title: "3", body: "123", author: "rustem", id: 3 },
+	]);
 
-	const handleClick = (e) => {
-		setName("Rustem");
+	const handleDeleteBlog = (id) => {
+		console.log("in delete blog", id);
+		const newBlogs = blogs.filter((blog) => blog.id !== id);
+		setBlogs(newBlogs);
 	};
 
-	const handleClickCount = (e) => {
-		setCount(1 + count);
-	};
+	useEffect(() => {
+		console.log("use effect");
+	});
 
 	return (
 		<div className="home">
-			<h2>Homepage</h2>
-			<p>
-				{name}'s age is {count}
-			</p>
-			<button onClick={handleClick}>Click me</button>
-			<button onClick={handleClickCount}>Click me</button>
+			<BlogList
+				blogs={blogs}
+				title="all blogs"
+				handleDeleteBlog={handleDeleteBlog}
+			/>
+			<BlogList
+				blogs={blogs.filter((e) => e.author === "rustem")}
+				title="rustem's blogs"
+				handleDeleteBlog={handleDeleteBlog}
+			/>
 		</div>
 	);
 };
