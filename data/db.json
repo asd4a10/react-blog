@@ -1,0 +1,7 @@
+{
+	"blogs": [
+		{ "title": "1", "body": "body1", "author": "mario", "id": 1 },
+		{ "title": "2", "body": "body2", "author": "licio", "id": 2 },
+		{ "title": "3", "body": "body3", "author": "rustem", "id": 3 }
+	]
+}

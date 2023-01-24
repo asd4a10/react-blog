@@ -2,34 +2,46 @@ import { useState, useEffect } from "react";
 import BlogList from "./BlogList";
 
 const Home = () => {
-	const [blogs, setBlogs] = useState([
-		{ title: "1", body: "123", author: "mario", id: 1 },
-		{ title: "2", body: "123", author: "licio", id: 2 },
-		{ title: "3", body: "123", author: "rustem", id: 3 },
-	]);
-
-	const handleDeleteBlog = (id) => {
-		console.log("in delete blog", id);
-		const newBlogs = blogs.filter((blog) => blog.id !== id);
-		setBlogs(newBlogs);
-	};
-
+	const [blogs, setBlogs] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
+	const [error, setError] = useState(null);
 	useEffect(() => {
 		console.log("use effect");
-	});
+		setTimeout(() => {
+			fetch("http://localhost:8000/blogs")
+				.then((res) => {
+					console.log(res);
+					if (!res.ok) {
+						throw Error("could not fetch data");
+					}
+					return res.json();
+				})
+				.then((data) => {
+					console.log(data);
+					setBlogs(data);
+					setIsLoading(false);
+					setError(null);
+				})
+				.catch((e) => {
+					setIsLoading(false);
+					setError(e.message);
+					console.log(e.message);
+				});
+		}, 100);
+	}, []);
 
 	return (
 		<div className="home">
-			<BlogList
-				blogs={blogs}
-				title="all blogs"
-				handleDeleteBlog={handleDeleteBlog}
-			/>
-			<BlogList
-				blogs={blogs.filter((e) => e.author === "rustem")}
-				title="rustem's blogs"
-				handleDeleteBlog={handleDeleteBlog}
-			/>
+			{error && <div>{error}</div>}
+			{isLoading && <div>Loading...</div>}
+			{blogs && <BlogList blogs={blogs} title="all blogs" />}
+			{/* {blogs && (
+				<BlogList
+					blogs={blogs.filter((e) => e.author === "rustem")}
+					title="rustem's blogs"
+					handleDeleteBlog={handleDeleteBlog}
+				/>
+			)} */}
 		</div>
 	);
 };
