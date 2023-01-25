@@ -6,8 +6,10 @@ const useFetch = (url) => {
 	const [error, setError] = useState(null);
 
 	useEffect(() => {
+		const abortCont = new AbortController();
+
 		setTimeout(() => {
-			fetch(url)
+			fetch(url, { signal: abortCont.signal })
 				.then((res) => {
 					console.log(res);
 					if (!res.ok) {
@@ -16,17 +18,22 @@ const useFetch = (url) => {
 					return res.json();
 				})
 				.then((data) => {
-					console.log(data);
+					// console.log(data);
 					setData(data);
 					setIsLoading(false);
 					setError(null);
 				})
 				.catch((e) => {
-					setIsLoading(false);
-					setError(e.message);
-					console.log(e.message);
+					if (e.name === "AbortError") {
+						console.log("fetch aborted");
+					} else {
+						setIsLoading(false);
+						setError(e.message);
+					}
 				});
 		}, 100);
+
+		return () => abortCont.abort();
 	}, [url]);
 
 	return { data, isLoading, error };
